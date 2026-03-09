@@ -16,20 +16,10 @@ from typing import Any
 import pyautogui
 import psutil
 
-from config import ALLOWED_DOMAINS
-
-
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _normalize(name: str) -> str:
     return name.lower().strip()
-
-def _is_app_allowed(app_name: str) -> bool:
-    # Any app found in the Start Menu is allowed — user installed it
-    n = _normalize(app_name)
-    start_menu = scan_start_menu()
-    return any(n in lnk_name or lnk_name in n for lnk_name in start_menu)
-
 
 def _get_launch_entry(name: str) -> dict | None:
     """Return {target, args} from Start Menu for the given app name, or None."""
@@ -41,9 +31,6 @@ def _get_launch_entry(name: str) -> dict | None:
         if norm in lnk_name or lnk_name in norm:
             return entry
     return None
-
-def _is_domain_allowed(url: str) -> bool:
-    return any(domain in url for domain in ALLOWED_DOMAINS)
 
 
 # ── Start Menu scanner ────────────────────────────────────────────────────────
@@ -154,9 +141,6 @@ APP_MAP = {
 
 def open_app(name: str) -> str:
     """Open a desktop application by name."""
-    if not _is_app_allowed(name):
-        raise PermissionError(f"App '{name}' is not in the allowed list.")
-
     # Prefer Start Menu entry (preserves target + arguments like Discord's --processStart)
     entry = _get_launch_entry(name)
     if entry:
@@ -214,10 +198,15 @@ def open_url(url: str) -> str:
     """Open a URL in the default browser."""
     if not url.startswith(("http://", "https://")):
         url = "https://" + url
-    if not _is_domain_allowed(url):
-        raise PermissionError(f"Domain not in allowed list: {url}")
     webbrowser.open(url)
     return f"Opened {url}"
+
+
+def open_folder(path: str) -> str:
+    """Open a folder in File Explorer."""
+    expanded = os.path.expandvars(os.path.expanduser(path))
+    subprocess.Popen(["explorer", expanded])
+    return f"Opened folder: {expanded}"
 
 
 # ── Mouse & keyboard ──────────────────────────────────────────────────────────
@@ -381,6 +370,17 @@ LOCAL_TOOL_SCHEMAS = [
                 "url": {"type": "string", "description": "URL to open"}
             },
             "required": ["url"],
+        },
+    },
+    {
+        "name": "open_folder",
+        "description": "Open a folder in File Explorer. Use this for local folders like Downloads, Desktop, Documents.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string", "description": "Folder path, e.g. C:\\Users\\name\\Downloads or %USERPROFILE%\\Downloads"}
+            },
+            "required": ["path"],
         },
     },
     {
@@ -549,6 +549,7 @@ LOCAL_TOOL_HANDLERS: dict[str, callable] = {
     "close_app":            close_app,
     "get_running_apps":     get_running_apps,
     "open_url":             open_url,
+    "open_folder":          open_folder,
     "click":                click,
     "double_click":         double_click,
     "right_click":          right_click,
