@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Data / memory
+data/
+
+# Screenshots
+data/screenshots/
+
+# Environment
+.env
+
+# Config contains real API keys — do not commit
+config.py

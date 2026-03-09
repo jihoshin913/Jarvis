@@ -1,0 +1,16 @@
+# Core AI
+anthropic>=0.40.0
+
+# Computer automation
+pyautogui>=0.9.54
+pynput>=1.7.6
+pygetwindow>=0.0.9
+
+# System info
+psutil>=5.9.0
+
+# Storage
+# sqlite3 is built into Python — no install needed
+
+# Composio — app integrations (Gmail, Slack, Calendar, etc.)
+composio-anthropic==0.10.10
