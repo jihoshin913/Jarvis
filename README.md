@@ -7,6 +7,35 @@ You: start my gaming setup
 → open_app("Discord")
 → open_app("Spotify")
 → open_app("League of Legends")
+
+You: send an email to my manager saying I'll be late today
+→ gmail_send_email(to="manager@company.com", subject="Running Late", body="...")
+
+You: open my downloads folder and take a screenshot
+→ open_folder("C:/Users/.../Downloads")
+→ screenshot()
+
+You: schedule a meeting with Sarah tomorrow at 2pm
+→ google_calendar_create_event(title="Meeting with Sarah", start="2025-01-15T14:00:00", ...)
+
+You: post in the #general Slack channel that the build is done
+→ slack_post_message(channel="#general", text="Build is done!")
+
+You: close spotify and open telegram
+→ close_app("Spotify")
+→ open_app("Telegram")
+
+You: what's the weather like today?
+→ open_url("https://wttr.in")
+
+You: search for minecraft videos on youtube
+→ open_url("https://www.youtube.com/results?search_query=minecraft")
+
+You: find the pytorch repo on github
+→ open_url("https://github.com/search?q=pytorch")
+
+You: explain how transformers work
+→ [Claude answers directly — no action needed]
 ```
 
 ---
